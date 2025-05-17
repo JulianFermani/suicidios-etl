@@ -1,0 +1,25 @@
+﻿categoria,centroide_lat,centroide_lon,fuente,id,iso_id,iso_nombre,nombre,nombre_completo
+Ciudad Autónoma,-34.6144420000000,-58.4458760000000,IGN,2,AR-C,Ciudad Autónoma de Buenos Aires,Ciudad Autónoma de Buenos Aires,Ciudad Autónoma de Buenos Aires
+Provincia,-38.6419830000000,-70.1198970000000,IGN,58,AR-Q,Neuquén,Neuquén,Provincia del Neuquén
+Provincia,-33.7611040000000,-66.0252310000000,IGN,74,AR-D,San Luis,San Luis,Provincia de San Luis
+Provincia,-30.7088230000000,-60.9506870000000,IGN,82,AR-S,Santa Fe,Santa Fe,Provincia de Santa Fe
+Provincia,-29.6849370000000,-67.1817580000000,IGN,46,AR-F,La Rioja,La Rioja,Provincia de La Rioja
+Provincia,-27.3359540000000,-66.9478970000000,IGN,10,AR-K,Catamarca,Catamarca,Provincia de Catamarca
+Provincia,-26.948284000000,-65.3647660000000,IGN,90,AR-T,Tucumán,Tucumán,Provincia de Tucumán
+Provincia,-26.3869870000000,-60.765116000000,IGN,22,AR-H,Chaco,Chaco,Provincia del Chaco
+Provincia,-24.8950870000000,-59.9321900000000,IGN,34,AR-P,Formosa,Formosa,Provincia de Formosa
+Provincia,-48.8155470000000,-69.9557620000000,IGN,78,AR-Z,Santa Cruz,Santa Cruz,Provincia de Santa Cruz
+Provincia,-43.7886270000000,-68.5267360000000,IGN,26,AR-U,Chubut,Chubut,Provincia del Chubut
+Provincia,-34.6303890000000,-68.5829460000000,IGN,50,AR-M,Mendoza,Mendoza,Provincia de Mendoza
+Provincia,-32.0589280000000,-59.201263000000,IGN,30,AR-E,Entre Ríos,Entre Ríos,Provincia de Entre Ríos
+Provincia,-30.8656610000000,-68.8881600000000,IGN,70,AR-J,San Juan,San Juan,Provincia de San Juan
+Provincia,-23.3199750000000,-65.764424000000,IGN,38,AR-Y,Jujuy,Jujuy,Provincia de Jujuy
+Provincia,-27.7834320000000,-63.2526270000000,IGN,86,AR-G,Santiago del Estero,Santiago del Estero,Provincia de Santiago del Estero
+Provincia,-40.4050800000000,-67.2296760000000,IGN,62,AR-R,Río Negro,Río Negro,Provincia de Río Negro
+Provincia,-28.7742040000000,-57.8010820000000,IGN,18,AR-W,Corrientes,Corrientes,Provincia de Corrientes
+Provincia,-26.8753030000000,-54.6515710000000,IGN,54,AR-N,Misiones,Misiones,Provincia de Misiones
+Provincia,-24.2992840000000,-64.8141590000000,IGN,66,AR-A,Salta,Salta,Provincia de Salta
+Provincia,-32.1447990000000,-63.801973000000,IGN,14,AR-X,Córdoba,Córdoba,Provincia de Córdoba
+Provincia,-36.6773920000000,-60.5584770000000,IGN,6,AR-B,Buenos Aires,Buenos Aires,Provincia de Buenos Aires
+Provincia,-37.1350650000000,-65.4476440000000,IGN,42,AR-L,La Pampa,La Pampa,Provincia de La Pampa
+Provincia,-82.5211350000000,-50.7428610000000,IGN,94,AR-V,Tierra del Fuego,"Tierra del Fuego, Antártida e Islas del Atlántico Sur","Provincia de Tierra del Fuego, Antártida e Islas del Atlántico Sur"

@@ -1,0 +1,162 @@
+-- 1. Provincia que tiene el mayor número de suicidios desde 2017 a 2023.
+-- Suicidios: id_hecho, id_provincia, id_departamento, id_localidad, fecha_hecho, hora_hecho, suicida_18_años_o_mas
+-- Provincias: id, iso_nombre
+-- Departamentos: id, nombre, id_provincia
+
+CREATE TABLE public.provincia (
+    id BIGINT PRIMARY KEY,
+    iso_nombre VARCHAR
+);
+
+CREATE TABLE public.departamento (
+    id BIGINT PRIMARY KEY,
+    nombre VARCHAR,
+    id_provincia BIGINT,
+    FOREIGN KEY(id_provincia) REFERENCES provincia(id)
+);
+
+CREATE TABLE public.suicidio(
+    id serial PRIMARY KEY,
+    id_provincia BIGINT,
+    FOREIGN KEY(id_provincia) REFERENCES provincia(id),
+    fecha_hecho VARCHAR,
+    hora_hecho VARCHAR,
+    suicida_18_anios_o_mas VARCHAR
+);
+
+CREATE TEMPORARY TABLE temp_departamento (
+    categoria VARCHAR,
+    centroide_lat FLOAT,
+    centroide_lon FLOAT,
+    fuente VARCHAR,
+    id VARCHAR,
+    nombre VARCHAR,
+    nombre_completo VARCHAR,
+    provincia_id VARCHAR,
+    provincia_interseccion FLOAT,
+    provincia_nombre VARCHAR
+);
+
+CREATE TEMPORARY TABLE provincia_temp (
+    categoria VARCHAR,
+    centroide_lat FLOAT,
+    centroide_lon FLOAT,
+    fuente VARCHAR,
+    id VARCHAR,
+    iso_id VARCHAR,
+    iso_nombre VARCHAR,
+    nombre VARCHAR,
+    nombre_completo VARCHAR
+);
+
+CREATE TEMPORARY TABLE temp_suicidio (
+    id_hecho INTEGER,
+    tipo_persona_id TEXT,
+    federal TEXT,
+    provincia_id TEXT,
+    provincia_nombre TEXT,
+    departamento_id TEXT,
+    departamento_nombre TEXT,
+    localidad_id TEXT,
+    localidad_nombre TEXT,
+    anio TEXT,
+    mes TEXT,
+    fecha_hecho TEXT,
+    hora_hecho TEXT,
+    tipo_lugar TEXT,
+    tipo_lugar_ampliado TEXT,
+    tipo_lugar_otro TEXT,
+    modalidad TEXT,
+    modalidad_ampliado TEXT,
+    modalidad_otro TEXT,
+    motivo_origen_registro TEXT,
+    motivo_origen_registro_otro TEXT,
+    suicida_sexo TEXT,
+    suicida_tr_edad TEXT,
+    suicida_18_anios_o_mas TEXT,
+    suicida_clase TEXT,
+    suicida_clase_otro TEXT,
+    suicida_identidad_genero TEXT
+);
+
+COPY provincia_temp
+FROM '/datos/provincias.csv' DELIMITER ',' CSV HEADER NULL '';
+
+INSERT INTO
+    public.provincia (
+        id,
+        iso_nombre
+    )
+SELECT
+    id::INTEGER,
+    iso_nombre
+FROM provincia_temp;
+
+COPY temp_departamento
+FROM '/datos/departamentos.csv' DELIMITER ',' CSV HEADER NULL '';
+
+INSERT INTO
+    public.departamento (
+        id,
+        nombre,
+        id_provincia
+    )
+SELECT
+    id::INTEGER,
+    nombre,
+    provincia_id::INTEGER
+FROM temp_departamento;
+
+COPY temp_suicidio
+FROM '/datos/tasa_de_suicidios.csv' DELIMITER ',' CSV HEADER NULL '';
+INSERT INTO
+  public.suicidio (
+    id_provincia,
+    fecha_hecho,
+    hora_hecho,
+    suicida_18_anios_o_mas
+)
+SELECT
+  provincia_id::BIGINT,
+  fecha_hecho VARCHAR,
+  hora_hecho VARCHAR,
+  suicida_18_anios_o_mas VARCHAR
+FROM temp_suicidio;
+
+-- Tablas definitivas
+INSERT INTO 
+  public.provincia (id, iso_nombre)
+SELECT DISTINCT
+  provincia_id::BIGINT,
+  provincia_nombre
+FROM temp_suicidio
+WHERE 
+  provincia_id::BIGINT NOT IN (
+    SELECT id
+    FROM public.provincia
+  );
+
+INSERT INTO
+  public.departamento (id, nombre, id_provincia)
+SELECT DISTINCT
+  departamento_id::BIGINT,
+  departamento_nombre,
+  provincia_id::BIGINT
+FROM temp_suicidio
+WHERE
+  departamento_id::BIGINT NOT IN (
+    SELECT id
+    FROM public.departamento
+  );
+
+INSERT INTO public.suicidio (id_provincia, fecha_hecho, hora_hecho, suicida_18_anios_o_mas)
+SELECT 
+  provincia_id::BIGINT,
+  fecha_hecho::VARCHAR,
+  hora_hecho::VARCHAR,
+  suicida_18_anios_o_mas::VARCHAR
+FROM temp_suicidio;
+
+
+-- 2. Horarios frecuentes de suicidio en la provincia de Córdoba.
+-- 3. Cantidad de personas menores de edad que cometieron suicidio.

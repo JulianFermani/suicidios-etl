@@ -1,0 +1,30 @@
+networks:
+  net:
+    external: false
+
+volumes:
+  postgres-db:
+    external: false
+
+services:
+  db:
+    image: postgres:alpine
+    env_file:
+      - .env.db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_INITDB_ARGS=--auth-host=md5 --auth-local=trust
+    healthcheck:
+      # Prueba de salud para el contenedor
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 10s
+      timeout: 2s
+      retries: 5
+    ports:
+      - 5433:5432
+    volumes:
+      - postgres-db:/var/lib/postgresql/data
+      - ./scripts:/docker-entrypoint-initdb.d # Scripts que se ejecutan solamente al iniciar por primera vez el servidor
+      - ./datos:/datos
+    networks:
+      - net
