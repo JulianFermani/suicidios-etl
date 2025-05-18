@@ -5,7 +5,8 @@
 
 CREATE TABLE public.provincia (
     id BIGINT PRIMARY KEY,
-    iso_nombre VARCHAR
+    iso_nombre VARCHAR,
+    id_iso VARCHAR
 );
 
 CREATE TABLE public.departamento (
@@ -85,11 +86,13 @@ FROM '/datos/provincias.csv' DELIMITER ',' CSV HEADER NULL '';
 INSERT INTO
     public.provincia (
         id,
-        iso_nombre
+        iso_nombre,
+        id_iso
     )
 SELECT
     id::INTEGER,
-    iso_nombre
+    iso_nombre,
+    iso_id
 FROM provincia_temp;
 
 COPY temp_departamento
