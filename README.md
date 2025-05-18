@@ -145,7 +145,7 @@ GROUP BY hora_texto, hora_entero
 ORDER BY hora_entero ASC;
 ```
 
-### 3. 👶 Suicidios de menores de edad
+### 3. Suicidios de menores de edad
 
 ```sql
 SELECT
