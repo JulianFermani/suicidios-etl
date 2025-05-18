@@ -10,7 +10,8 @@ SELECT
 FROM
   public.suicidio s
 JOIN
-sql
+  public.provincia p ON s.id_provincia = p.id
+WHERE
   (CASE
     WHEN LENGTH(s.fecha_hecho) = 8 THEN
       CASE
