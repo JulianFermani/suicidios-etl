@@ -2,13 +2,14 @@
 -- Suicidios: id_hecho, id_provincia, id_departamento, id_localidad, fecha_hecho, hora_hecho, suicida_18_años_o_mas
 -- Provincias: id, iso_nombre
 -- Departamentos: id, nombre, id_provincia
-
+-- Crear tabla de provincias
 CREATE TABLE public.provincia (
     id BIGINT PRIMARY KEY,
     iso_nombre VARCHAR,
     id_iso VARCHAR
 );
 
+-- Crear tabla de departamentos
 CREATE TABLE public.departamento (
     id BIGINT PRIMARY KEY,
     nombre VARCHAR,
@@ -16,13 +17,28 @@ CREATE TABLE public.departamento (
     FOREIGN KEY(id_provincia) REFERENCES provincia(id)
 );
 
+-- Crear tabla de suicidios (AGREGADO: departamento_nombre)
 CREATE TABLE public.suicidio(
     id serial PRIMARY KEY,
     id_provincia BIGINT,
     FOREIGN KEY(id_provincia) REFERENCES provincia(id),
     fecha_hecho VARCHAR,
     hora_hecho VARCHAR,
-    suicida_18_anios_o_mas VARCHAR
+    suicida_18_anios_o_mas VARCHAR,
+    departamento_nombre TEXT  -- agregado
+);
+
+-- Tablas temporales para importar CSV
+CREATE TEMPORARY TABLE provincia_temp (
+    categoria VARCHAR,
+    centroide_lat FLOAT,
+    centroide_lon FLOAT,
+    fuente VARCHAR,
+    id VARCHAR,
+    iso_id VARCHAR,
+    iso_nombre VARCHAR,
+    nombre VARCHAR,
+    nombre_completo VARCHAR
 );
 
 CREATE TEMPORARY TABLE temp_departamento (
@@ -36,18 +52,6 @@ CREATE TEMPORARY TABLE temp_departamento (
     provincia_id VARCHAR,
     provincia_interseccion FLOAT,
     provincia_nombre VARCHAR
-);
-
-CREATE TEMPORARY TABLE provincia_temp (
-    categoria VARCHAR,
-    centroide_lat FLOAT,
-    centroide_lon FLOAT,
-    fuente VARCHAR,
-    id VARCHAR,
-    iso_id VARCHAR,
-    iso_nombre VARCHAR,
-    nombre VARCHAR,
-    nombre_completo VARCHAR
 );
 
 CREATE TEMPORARY TABLE temp_suicidio (
@@ -80,15 +84,11 @@ CREATE TEMPORARY TABLE temp_suicidio (
     suicida_identidad_genero TEXT
 );
 
+-- Cargar datos
 COPY provincia_temp
 FROM '/datos/provincias.csv' DELIMITER ',' CSV HEADER NULL '';
 
-INSERT INTO
-    public.provincia (
-        id,
-        iso_nombre,
-        id_iso
-    )
+INSERT INTO public.provincia (id, iso_nombre, id_iso)
 SELECT
     id::INTEGER,
     iso_nombre,
@@ -98,12 +98,7 @@ FROM provincia_temp;
 COPY temp_departamento
 FROM '/datos/departamentos.csv' DELIMITER ',' CSV HEADER NULL '';
 
-INSERT INTO
-    public.departamento (
-        id,
-        nombre,
-        id_provincia
-    )
+INSERT INTO public.departamento (id, nombre, id_provincia)
 SELECT
     id::INTEGER,
     nombre,
@@ -112,54 +107,43 @@ FROM temp_departamento;
 
 COPY temp_suicidio
 FROM '/datos/tasa_de_suicidios.csv' DELIMITER ',' CSV HEADER NULL '';
-INSERT INTO
-  public.suicidio (
+
+-- Insertar datos en tabla suicidio, incluyendo departamento_nombre
+INSERT INTO public.suicidio (
     id_provincia,
     fecha_hecho,
     hora_hecho,
-    suicida_18_anios_o_mas
+    suicida_18_anios_o_mas,
+    departamento_nombre
 )
 SELECT
-  provincia_id::BIGINT,
-  fecha_hecho VARCHAR,
-  hora_hecho VARCHAR,
-  suicida_18_anios_o_mas VARCHAR
+    provincia_id::BIGINT,
+    fecha_hecho::VARCHAR,
+    hora_hecho::VARCHAR,
+    suicida_18_anios_o_mas::VARCHAR,
+    departamento_nombre::VARCHAR
 FROM temp_suicidio;
 
--- Tablas definitivas
-INSERT INTO 
-  public.provincia (id, iso_nombre)
+-- Insertar provincias faltantes
+INSERT INTO public.provincia (id, iso_nombre)
 SELECT DISTINCT
-  provincia_id::BIGINT,
-  provincia_nombre
+    provincia_id::BIGINT,
+    provincia_nombre
 FROM temp_suicidio
-WHERE 
-  provincia_id::BIGINT NOT IN (
-    SELECT id
-    FROM public.provincia
-  );
+WHERE provincia_id::BIGINT NOT IN (
+    SELECT id FROM public.provincia
+);
 
-INSERT INTO
-  public.departamento (id, nombre, id_provincia)
+-- Insertar departamentos faltantes
+INSERT INTO public.departamento (id, nombre, id_provincia)
 SELECT DISTINCT
-  departamento_id::BIGINT,
-  departamento_nombre,
-  provincia_id::BIGINT
+    departamento_id::BIGINT,
+    departamento_nombre,
+    provincia_id::BIGINT
 FROM temp_suicidio
-WHERE
-  departamento_id::BIGINT NOT IN (
-    SELECT id
-    FROM public.departamento
-  );
-
-INSERT INTO public.suicidio (id_provincia, fecha_hecho, hora_hecho, suicida_18_anios_o_mas)
-SELECT 
-  provincia_id::BIGINT,
-  fecha_hecho::VARCHAR,
-  hora_hecho::VARCHAR,
-  suicida_18_anios_o_mas::VARCHAR
-FROM temp_suicidio;
-
+WHERE departamento_id::BIGINT NOT IN (
+    SELECT id FROM public.departamento
+);
 
 -- 2. Horarios frecuentes de suicidio en la provincia de Córdoba.
 -- 3. Cantidad de personas menores de edad que cometieron suicidio.
