@@ -139,6 +139,7 @@ SELECT
 FROM public.suicidio s
 JOIN public.provincia p ON s.id_provincia = p.id
 WHERE p.iso_nombre = 'Córdoba'
+  AND s.departamento_nombre = 'General San Martín'
   AND s.hora_hecho IS NOT NULL
   AND s.hora_hecho <> ''
 GROUP BY hora_texto, hora_entero
