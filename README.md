@@ -117,7 +117,7 @@ GROUP BY p.id_iso, p.iso_nombre
 ORDER BY total_suicidios DESC;
 ```
 
-### 2. Horas frecuentes de suicidio en Córdoba
+### 2. Horas frecuentes de suicidio en el Departamento General José de San Martin, Córdoba
 
 ```sql
 SELECT
